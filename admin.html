@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es-PE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panel de administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .adm{padding:24px 0 80px}
+    .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 22px}
+    .panel[hidden]{display:none}
+    table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+    th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+    th{background:var(--bleach);font-family:var(--display);font-size:.9rem}
+    .tablewrap{overflow-x:auto}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .btn--sm{min-height:36px;padding:0 14px;font-size:.9rem}
+    dialog{border:0;border-radius:18px;padding:0;width:min(720px,94vw);max-height:92vh;box-shadow:0 30px 80px rgba(15,24,48,.4)}
+    dialog::backdrop{background:rgba(15,24,48,.55)}
+    dialog form{padding:22px;display:grid;gap:14px;max-height:92vh;overflow:auto}
+    .checks{display:flex;gap:18px;flex-wrap:wrap}
+    .checks label{display:flex;gap:8px;align-items:center;font-weight:600}
+    .note{background:var(--bleach);border-left:4px solid var(--stitch);padding:12px 16px;border-radius:8px}
+    .status{color:var(--ok);font-weight:600}
+    .off{opacity:.55}
+  </style>
+</head>
+<body>
+  <div class="topbar">Panel de administración: los cambios se guardan como borrador en este navegador hasta que publiques.</div>
+  <div class="wrap adm">
+    <h1 style="font-size:clamp(1.8rem,4vw,2.6rem)">Administrar tienda</h1>
+    <p class="note"><b>Importante:</b> este panel funciona en tu navegador y no tiene contraseña real. Úsalo en tu computadora y <b>no subas admin.html al hosting</b> (o protégelo con la contraseña de tu hosting). Para que los cambios se vean en la tienda debes descargar <b>data.js</b> y subirlo. Mira la pestaña Publicar.</p>
+
+    <div class="tabs" role="tablist">
+      <button class="chip" role="tab" data-tab="productos" aria-pressed="true">Productos</button>
+      <button class="chip" role="tab" data-tab="cupones" aria-pressed="false">Cupones</button>
+      <button class="chip" role="tab" data-tab="aviso" aria-pressed="false">Aviso de portada</button>
+      <button class="chip" role="tab" data-tab="publicar" aria-pressed="false">Publicar</button>
+    </div>
+
+    <!-- PRODUCTOS -->
+    <section class="panel" id="p-productos">
+      <div class="actions" style="margin-bottom:14px">
+        <button class="btn btn--stitch btn--sm" id="nuevoProd">Agregar producto</button>
+        <div class="field" style="flex:1;min-width:200px"><label class="sr" for="buscar">Buscar</label><input id="buscar" type="search" placeholder="Buscar por nombre"></div>
+        <div class="field"><label class="sr" for="fcat">Categoría</label><select id="fcat"></select></div>
+      </div>
+      <div class="tablewrap"><table><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
+    </section>
+
+    <!-- CUPONES -->
+    <section class="panel" id="p-cupones" hidden>
+      <p>Los clientes escriben el código al comprar. Tipos: <b>porcentaje</b> (descuento en %), <b>monto</b> (descuento fijo en soles) o <b>envío</b> (envío gratis).</p>
+      <div class="tablewrap"><table><thead><tr><th>Código</th><th>Tipo</th><th>Valor</th><th>Compra mínima</th><th>Activo</th><th></th></tr></thead><tbody id="cupBody"></tbody></table></div>
+      <p style="margin-top:14px"><button class="btn btn--stitch btn--sm" id="nuevoCup">Agregar cupón</button></p>
+    </section>
+
+    <!-- AVISO -->
+    <section class="panel" id="p-aviso" hidden>
+      <p>Franja de color que aparece arriba de la portada.</p>
+      <div class="form" style="max-width:560px">
+        <div class="field"><label for="bt">Título</label><input id="bt"></div>
+        <div class="field"><label for="bx">Texto</label><input id="bx"></div>
+        <div class="field"><label for="be">Enlace (por ejemplo #/catalogo?oferta=1)</label><input id="be"></div>
+        <label class="optrow"><input type="checkbox" id="ba"><span><b>Mostrar aviso</b></span></label>
+      </div>
+    </section>
+
+    <!-- PUBLICAR -->
+    <section class="panel" id="p-publicar" hidden>
+      <ol class="steps">
+        <li>Mira cómo queda con <b>Ver vista previa</b> (solo tú ves el borrador).</li>
+        <li>Si te gusta, toca <b>Descargar data.js</b>.</li>
+        <li>Reemplaza el archivo <code>js/data.js</code> de tu carpeta por el que descargaste.</li>
+        <li>Las fotos de productos van en la carpeta <code>img/</code>. Súbelas junto con <code>data.js</code> a tu hosting.</li>
+      </ol>
+      <div class="actions">
+        <a class="btn btn--ghost" href="index.html?preview=1" target="_blank" rel="noopener">Ver vista previa</a>
+        <button class="btn btn--stitch" id="descargar">Descargar data.js</button>
+        <button class="btn btn--ghost" id="descartar">Descartar borrador</button>
+      </div>
+      <p class="status" id="estado" role="status" style="margin-top:14px"></p>
+    </section>
+  </div>
+
+  <dialog id="dlg">
+    <form id="pform" method="dialog">
+      <h2 id="dtitulo" style="font-size:1.4rem">Producto</h2>
+      <div class="grid2">
+        <div class="field"><label for="f_nombre">Nombre</label><input id="f_nombre" required></div>
+        <div class="field"><label for="f_cat">Categoría</label><select id="f_cat"></select></div>
+        <div class="field"><label for="f_precio">Precio (S/)</label><input id="f_precio" type="number" min="0" step="0.01" required></div>
+        <div class="field"><label for="f_antes">Precio antes (opcional, para oferta)</label><input id="f_antes" type="number" min="0" step="0.01"></div>
+        <div class="field"><label for="f_stock">Stock</label><input id="f_stock" type="number" min="0" step="1" required></div>
+        <div class="field"><label for="f_tallas">Tallas, separadas por coma</label><input id="f_tallas" placeholder="XS, S, M, L"></div>
+      </div>
+      <div class="field"><label for="f_colores">Colores: nombre y color, separados por coma</label><input id="f_colores" placeholder="Negro:#1b1b1f, Beige:#d9c6a8"><div class="hint">Cada color se escribe como Nombre:#código. Ejemplo: Rosa:#e08fa4</div></div>
+      <div class="field"><label for="f_desc">Descripción</label><textarea id="f_desc"></textarea></div>
+      <div class="field"><label for="f_imgs">Fotos (rutas separadas por coma)</label><input id="f_imgs" placeholder="img/jean-mom-1.jpg, img/jean-mom-2.jpg"><div class="hint">Sube las fotos a la carpeta img/ y escribe su nombre aquí. Sin fotos, se muestra un dibujo de la prenda.</div></div>
+      <div class="checks"><label><input type="checkbox" id="f_nuevo"> Nuevo</label><label><input type="checkbox" id="f_top"> Más vendido</label><label><input type="checkbox" id="f_oculto"> Ocultar de la tienda</label></div>
+      <p class="msg-err" id="perr" role="alert"></p>
+      <div class="actions"><button class="btn btn--stitch" type="submit" value="ok" id="guardarP">Guardar producto</button><button class="btn btn--ghost" type="button" id="cancelarP">Cancelar</button></div>
+    </form>
+  </dialog>
+
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var KEY = "tienda_borrador";
+    var $ = function (s) { return document.querySelector(s); };
+    var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+    var CATS = window.CATEGORIAS;
+    var d;
+    try { d = JSON.parse(localStorage.getItem(KEY)); } catch (e) { d = null; }
+    var hayBorrador = !!(d && d.productos);
+    if (!hayBorrador) d = { productos: JSON.parse(JSON.stringify(window.PRODUCTOS)), cupones: JSON.parse(JSON.stringify(window.CUPONES)), banners: JSON.parse(JSON.stringify(window.BANNERS)) };
+    if (!d.banners || !d.banners.length) d.banners = [{ titulo: "", texto: "", enlace: "#/catalogo", activo: false }];
+    var editId = null;
+
+    function guardar(msg) {
+      try { localStorage.setItem(KEY, JSON.stringify(d)); $("#estado").textContent = msg || "Borrador guardado en este navegador."; }
+      catch (e) { $("#estado").textContent = "No se pudo guardar el borrador. Descarga data.js para no perder los cambios."; }
+    }
+    function catNombre(s) { var c = CATS.filter(function (x) { return x.slug === s; })[0]; return c ? c.nombre : s; }
+
+    /* ---- pestañas ---- */
+    document.querySelectorAll("[data-tab]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll("[data-tab]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        document.querySelectorAll(".panel").forEach(function (p) { p.hidden = p.id !== "p-" + b.dataset.tab; });
+      });
+    });
+
+    /* ---- productos ---- */
+    var fc = $("#fcat");
+    fc.innerHTML = '<option value="">Todas las categorías</option>' + CATS.map(function (c) { return '<option value="' + c.slug + '">' + esc(c.nombre) + "</option>"; }).join("");
+    $("#f_cat").innerHTML = CATS.map(function (c) { return '<option value="' + c.slug + '">' + esc(c.nombre) + "</option>"; }).join("");
+
+    function listar() {
+      var q = $("#buscar").value.toLowerCase(), c = fc.value;
+      var rows = d.productos.filter(function (p) { return (!c || p.categoria === c) && (!q || p.nombre.toLowerCase().indexOf(q) >= 0); });
+      $("#tbody").innerHTML = rows.length ? rows.map(function (p) {
+        return '<tr class="' + (p.oculto ? "off" : "") + '"><td><b>' + esc(p.nombre) + "</b></td><td>" + esc(catNombre(p.categoria)) + "</td><td>S/ " + Number(p.precio).toFixed(2) + (p.precioAntes ? ' <s style="color:var(--muted)">' + Number(p.precioAntes).toFixed(2) + "</s>" : "") + "</td><td>" + p.stock + "</td><td>" + (p.oculto ? "Oculto" : p.stock > 0 ? "Visible" : "Agotado") + '</td><td><div class="actions"><button class="btn btn--ghost btn--sm" data-edit="' + p.id + '">Editar</button><button class="btn btn--ghost btn--sm" data-dup="' + p.id + '">Duplicar</button><button class="btn btn--ghost btn--sm" data-del="' + p.id + '">Eliminar</button></div></td></tr>';
+      }).join("") : '<tr><td colspan="6">No hay productos con ese filtro.</td></tr>';
+    }
+    $("#buscar").addEventListener("input", listar); fc.addEventListener("change", listar);
+
+    function nuevoId() { var n = 1; var ids = d.productos.map(function (p) { return p.id; }); while (ids.indexOf("p" + (n < 10 ? "0" + n : n)) >= 0) n++; return "p" + (n < 10 ? "0" + n : n); }
+    function abrir(p) {
+      editId = p ? p.id : null;
+      $("#dtitulo").textContent = p ? "Editar producto" : "Agregar producto";
+      $("#f_nombre").value = p ? p.nombre : ""; $("#f_cat").value = p ? p.categoria : CATS[0].slug;
+      $("#f_precio").value = p ? p.precio : ""; $("#f_antes").value = p && p.precioAntes ? p.precioAntes : "";
+      $("#f_stock").value = p ? p.stock : 10; $("#f_tallas").value = p ? (p.tallas || []).join(", ") : "XS, S, M, L, XL";
+      $("#f_colores").value = p ? (p.colores || []).map(function (c) { return c.n + ":" + c.hex; }).join(", ") : "";
+      $("#f_desc").value = p ? p.desc : ""; $("#f_imgs").value = p ? (p.imagenes || []).join(", ") : "";
+      $("#f_nuevo").checked = !!(p && p.nuevo); $("#f_top").checked = !!(p && p.masVendido); $("#f_oculto").checked = !!(p && p.oculto);
+      $("#perr").textContent = ""; $("#dlg").showModal();
+    }
+    $("#nuevoProd").addEventListener("click", function () { abrir(null); });
+    $("#cancelarP").addEventListener("click", function () { $("#dlg").close(); });
+    $("#tbody").addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      if (b.dataset.edit) abrir(d.productos.filter(function (p) { return p.id === b.dataset.edit; })[0]);
+      if (b.dataset.dup) { var o = JSON.parse(JSON.stringify(d.productos.filter(function (p) { return p.id === b.dataset.dup; })[0])); o.id = nuevoId(); o.nombre += " (copia)"; d.productos.push(o); guardar(); listar(); }
+      if (b.dataset.del) { var p = d.productos.filter(function (x) { return x.id === b.dataset.del; })[0]; if (confirm('¿Eliminar "' + p.nombre + '"? Esta acción no se puede deshacer.')) { d.productos = d.productos.filter(function (x) { return x.id !== p.id; }); guardar(); listar(); } }
+    });
+    $("#pform").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var colores = [], bad = "";
+      $("#f_colores").value.split(",").map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (s) {
+        var m = s.match(/^(.+?):\s*(#[0-9a-fA-F]{6})$/);
+        if (m) colores.push({ n: m[1].trim(), hex: m[2] }); else bad = 'El color "' + s + '" debe verse así: Nombre:#aabbcc';
+      });
+      var tallas = $("#f_tallas").value.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      if (!tallas.length) bad = bad || "Agrega al menos una talla (para lentes usa: Única).";
+      var precio = Number($("#f_precio").value);
+      if (!$("#f_nombre").value.trim()) bad = bad || "Escribe el nombre del producto.";
+      if (!(precio > 0)) bad = bad || "Escribe un precio mayor a 0.";
+      if (bad) { $("#perr").textContent = bad; return; }
+      var o = {
+        id: editId || nuevoId(), nombre: $("#f_nombre").value.trim(), categoria: $("#f_cat").value, precio: precio,
+        precioAntes: Number($("#f_antes").value) || 0, tallas: tallas, colores: colores, desc: $("#f_desc").value.trim(),
+        stock: Math.max(0, parseInt($("#f_stock").value, 10) || 0), nuevo: $("#f_nuevo").checked, masVendido: $("#f_top").checked,
+        oculto: $("#f_oculto").checked, imagenes: $("#f_imgs").value.split(",").map(function (s) { return s.trim(); }).filter(Boolean)
+      };
+      if (editId) d.productos = d.productos.map(function (p) { return p.id === editId ? o : p; }); else d.productos.push(o);
+      guardar(); listar(); $("#dlg").close();
+    });
+
+    /* ---- cupones ---- */
+    function listarCup() {
+      $("#cupBody").innerHTML = d.cupones.length ? d.cupones.map(function (c, i) {
+        return "<tr><td><input data-i=\"" + i + "\" data-k=\"codigo\" value=\"" + esc(c.codigo) + "\" aria-label=\"Código\" style=\"text-transform:uppercase;width:150px;height:38px;border:1px solid var(--line);border-radius:8px;padding:0 8px\"></td>" +
+          "<td><select data-i=\"" + i + "\" data-k=\"tipo\" aria-label=\"Tipo\" style=\"height:38px;border:1px solid var(--line);border-radius:8px\"><option value=\"porcentaje\"" + (c.tipo === "porcentaje" ? " selected" : "") + ">porcentaje</option><option value=\"monto\"" + (c.tipo === "monto" ? " selected" : "") + ">monto</option><option value=\"envio\"" + (c.tipo === "envio" ? " selected" : "") + ">envío gratis</option></select></td>" +
+          "<td><input type=\"number\" min=\"0\" data-i=\"" + i + "\" data-k=\"valor\" value=\"" + c.valor + "\" aria-label=\"Valor\" style=\"width:90px;height:38px;border:1px solid var(--line);border-radius:8px;padding:0 8px\"></td>" +
+          "<td><input type=\"number\" min=\"0\" data-i=\"" + i + "\" data-k=\"minimo\" value=\"" + (c.minimo || 0) + "\" aria-label=\"Compra mínima\" style=\"width:100px;height:38px;border:1px solid var(--line);border-radius:8px;padding:0 8px\"></td>" +
+          "<td><input type=\"checkbox\" data-i=\"" + i + "\" data-k=\"activo\"" + (c.activo !== false ? " checked" : "") + " aria-label=\"Activo\"></td>" +
+          "<td><button class=\"btn btn--ghost btn--sm\" data-delc=\"" + i + "\">Eliminar</button></td></tr>";
+      }).join("") : '<tr><td colspan="6">Aún no tienes cupones.</td></tr>';
+    }
+    $("#cupBody").addEventListener("change", function (e) {
+      var el = e.target; if (el.dataset.i == null) return;
+      var c = d.cupones[el.dataset.i], k = el.dataset.k;
+      c[k] = k === "activo" ? el.checked : (k === "valor" || k === "minimo") ? Number(el.value) || 0 : el.value.trim();
+      guardar();
+    });
+    $("#cupBody").addEventListener("click", function (e) { var b = e.target.closest("[data-delc]"); if (b) { d.cupones.splice(Number(b.dataset.delc), 1); guardar(); listarCup(); } });
+    $("#nuevoCup").addEventListener("click", function () { d.cupones.push({ codigo: "NUEVO10", tipo: "porcentaje", valor: 10, minimo: 0, activo: true }); guardar(); listarCup(); });
+
+    /* ---- aviso ---- */
+    var b0 = d.banners[0];
+    $("#bt").value = b0.titulo || ""; $("#bx").value = b0.texto || ""; $("#be").value = b0.enlace || ""; $("#ba").checked = b0.activo !== false && !!b0.titulo;
+    ["bt", "bx", "be", "ba"].forEach(function (id) {
+      $("#" + id).addEventListener("input", function () { b0.titulo = $("#bt").value; b0.texto = $("#bx").value; b0.enlace = $("#be").value || "#/catalogo"; b0.activo = $("#ba").checked; guardar(); });
+    });
+
+    /* ---- publicar ---- */
+    $("#descargar").addEventListener("click", function () {
+      var js = "/* DATOS DE LA TIENDA (productos, categorías, cupones, aviso).\n   Generado desde admin.html. Reemplaza js/data.js con este archivo. */\n" +
+        "window.CATEGORIAS = " + JSON.stringify(CATS, null, 1) + ";\n\n" +
+        "window.PRODUCTOS = " + JSON.stringify(d.productos, null, 1) + ";\n\n" +
+        "window.CUPONES = " + JSON.stringify(d.cupones, null, 1) + ";\n\n" +
+        "window.BANNERS = " + JSON.stringify(d.banners, null, 1) + ";\n";
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([js], { type: "text/javascript" })); a.download = "data.js";
+      document.body.appendChild(a); a.click(); a.remove();
+      $("#estado").textContent = "Descargado data.js. Reemplaza js/data.js con ese archivo y súbelo a tu hosting.";
+    });
+    $("#descartar").addEventListener("click", function () {
+      if (confirm("¿Descartar el borrador y volver a los datos publicados? Perderás los cambios no descargados.")) { try { localStorage.removeItem(KEY); } catch (e) { /* nada */ } location.reload(); }
+    });
+
+    listar(); listarCup();
+    if (hayBorrador) $("#estado").textContent = "Estás editando un borrador guardado en este navegador.";
+  })();
+  </script>
+</body>
+</html>

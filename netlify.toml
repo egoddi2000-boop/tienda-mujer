@@ -1,0 +1,8 @@
+# Configuración de Netlify
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  # La función lee los precios reales desde estos archivos (no confía en el navegador)
+  included_files = ["js/data.js", "js/config.js"]

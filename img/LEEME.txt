@@ -1,0 +1,3 @@
+Pon aqui tus fotos (jpg o webp) y los QR:
+  yape-qr.png
+  plin-qr.png
